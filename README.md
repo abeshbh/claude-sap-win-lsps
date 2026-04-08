@@ -12,7 +12,12 @@ Tracked across multiple issues: [#19658](https://github.com/anthropics/claude-co
 
 ## The fix
 
-Each plugin bundles its LSP server as a local npm dependency and launches it via `node` + `${CLAUDE_PLUGIN_ROOT}` -- a variable that Claude Code substitutes with the plugin's install path. No hardcoded paths, no `.cmd` shims, works on any Windows machine.
+Each plugin:
+1. Bundles a `package.json` with the LSP server as a dependency
+2. Uses a `SessionStart` hook to auto-install dependencies into `${CLAUDE_PLUGIN_DATA}` (a persistent directory that survives plugin updates)
+3. Launches the LSP via `node` + `${CLAUDE_PLUGIN_DATA}/node_modules/...` -- bypassing `.cmd` shims entirely
+
+No hardcoded paths. No manual `npm install`. No global installs. Works on any Windows machine with Node.js.
 
 ## Plugins
 
@@ -23,43 +28,16 @@ Each plugin bundles its LSP server as a local npm dependency and launches it via
 
 ## Installation
 
-### 1. Add the marketplace
-
 ```
 /plugin marketplace add abeshbh/claude-sap-win-lsps
-```
-
-### 2. Install plugins
-
-```
 /plugin install typescript-lsp@claude-sap-win-lsps
 /plugin install cds-lsp@claude-sap-win-lsps
-```
-
-### 3. Install npm dependencies
-
-After installing, run `npm install` inside each plugin's cache directory:
-
-```powershell
-# Find the plugin cache location
-$cache = "$env:USERPROFILE\.claude\plugins\cache\claude-sap-win-lsps"
-
-# Install TypeScript LSP dependencies
-cd "$cache\typescript-lsp\*"
-npm install
-
-# Install CDS LSP dependencies
-cd "$cache\cds-lsp\*"
-npm install
-```
-
-### 4. Reload plugins
-
-```
 /reload-plugins
 ```
 
-### 5. Disable conflicting plugins (if installed)
+Dependencies are installed automatically on the first session start. The first launch may take 30-60 seconds while npm installs packages.
+
+## Disable conflicting plugins
 
 If you previously installed the official TypeScript LSP plugin, disable it:
 
@@ -69,23 +47,46 @@ If you previously installed the official TypeScript LSP plugin, disable it:
 
 ## How it works
 
-The `.lsp.json` in each plugin uses `node` as the command and `${CLAUDE_PLUGIN_ROOT}` to reference the bundled entry point:
+Each plugin has three key files:
 
+**`package.json`** -- declares the LSP server as a dependency:
 ```json
 {
-  "typescript": {
-    "command": "node",
-    "args": ["${CLAUDE_PLUGIN_ROOT}/node_modules/typescript-language-server/lib/cli.mjs", "--stdio"],
-    "cwd": "${CLAUDE_PLUGIN_ROOT}",
-    "extensionToLanguage": {
-      ".ts": "typescript",
-      ".js": "javascript"
-    }
+  "dependencies": {
+    "typescript-language-server": "^5.1.0",
+    "typescript": "^5.7.0"
   }
 }
 ```
 
-`${CLAUDE_PLUGIN_ROOT}` is substituted by Claude Code at runtime with the plugin's absolute install path. Since `node.exe` is a real binary (not a `.cmd` shim), `spawn()` finds it without issues.
+**`.lsp.json`** -- configures Claude Code to launch via `node`:
+```json
+{
+  "typescript": {
+    "command": "node",
+    "args": ["${CLAUDE_PLUGIN_DATA}/node_modules/typescript-language-server/lib/cli.mjs", "--stdio"],
+    "extensionToLanguage": { ".ts": "typescript", ".js": "javascript" }
+  }
+}
+```
+
+**`plugin.json`** -- includes a `SessionStart` hook that auto-installs deps:
+```json
+{
+  "hooks": {
+    "SessionStart": [{
+      "hooks": [{
+        "type": "command",
+        "command": "diff package.json ... || npm install",
+        "timeout": 60,
+        "async": true
+      }]
+    }]
+  }
+}
+```
+
+`${CLAUDE_PLUGIN_DATA}` is a persistent directory managed by Claude Code that survives plugin updates. Dependencies are installed there once and only reinstalled when `package.json` changes.
 
 ## Requirements
 

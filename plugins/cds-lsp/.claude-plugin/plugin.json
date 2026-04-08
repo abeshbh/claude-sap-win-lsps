@@ -1,21 +1,26 @@
 {
   "name": "cds-lsp",
   "version": "1.0.0",
-  "description": "SAP CDS language server for Claude Code on Windows. Bundles @sap/cds-lsp locally to bypass the .cmd shim spawn issue.",
+  "description": "SAP CDS language server for Claude Code on Windows. Auto-installs dependencies on first session.",
   "author": {
     "name": "Abesh Bhattacharjee",
     "email": "abesh@outlook.com"
   },
   "license": "MIT",
   "keywords": ["sap", "cds", "cap", "lsp", "windows"],
-  "lspServers": {
-    "cds": {
-      "command": "node",
-      "args": ["${CLAUDE_PLUGIN_ROOT}/node_modules/@sap/cds-lsp/dist/main.js", "--stdio"],
-      "cwd": "${CLAUDE_PLUGIN_ROOT}",
-      "extensionToLanguage": {
-        ".cds": "cds"
+  "lspServers": "./.lsp.json",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'diff -q \"${CLAUDE_PLUGIN_ROOT}/package.json\" \"${CLAUDE_PLUGIN_DATA}/package.json\" >/dev/null 2>&1 || (cp \"${CLAUDE_PLUGIN_ROOT}/package.json\" \"${CLAUDE_PLUGIN_DATA}/\" && cd \"${CLAUDE_PLUGIN_DATA}\" && npm install --silent) || rm -f \"${CLAUDE_PLUGIN_DATA}/package.json\"'",
+            "timeout": 60,
+            "async": true
+          }
+        ]
       }
-    }
+    ]
   }
 }

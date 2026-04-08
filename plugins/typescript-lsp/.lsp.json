@@ -1,8 +1,10 @@
 {
   "typescript": {
     "command": "node",
-    "args": ["${CLAUDE_PLUGIN_ROOT}/node_modules/typescript-language-server/lib/cli.mjs", "--stdio"],
-    "cwd": "${CLAUDE_PLUGIN_ROOT}",
+    "args": ["${CLAUDE_PLUGIN_DATA}/node_modules/typescript-language-server/lib/cli.mjs", "--stdio"],
+    "env": {
+      "NODE_PATH": "${CLAUDE_PLUGIN_DATA}/node_modules"
+    },
     "extensionToLanguage": {
       ".ts": "typescript",
       ".tsx": "typescriptreact",

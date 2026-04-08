@@ -1,0 +1,13 @@
+{
+  "name": "typescript-lsp",
+  "version": "1.0.0",
+  "description": "TypeScript/JavaScript language server for Claude Code on Windows. Bundles typescript-language-server locally to bypass the .cmd shim spawn issue.",
+  "author": {
+    "name": "Abesh Bhattacharjee",
+    "email": "abesh@outlook.com"
+  },
+  "homepage": "https://github.com/typescript-language-server/typescript-language-server",
+  "license": "MIT",
+  "keywords": ["typescript", "javascript", "lsp", "windows"],
+  "lspServers": "../.lsp.json"
+}

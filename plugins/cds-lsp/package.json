@@ -1,0 +1,9 @@
+{
+  "name": "claude-cds-lsp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bundled SAP CDS language server for Claude Code on Windows",
+  "dependencies": {
+    "@sap/cds-lsp": "^8.7.0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "cds-lsp",
+  "version": "1.0.0",
+  "description": "SAP CDS language server for Claude Code on Windows. Bundles @sap/cds-lsp locally to bypass the .cmd shim spawn issue.",
+  "author": {
+    "name": "Abesh Bhattacharjee",
+    "email": "abesh@outlook.com"
+  },
+  "license": "MIT",
+  "keywords": ["sap", "cds", "cap", "lsp", "windows"],
+  "lspServers": "../.lsp.json"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "claude-typescript-lsp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bundled TypeScript language server for Claude Code on Windows",
+  "dependencies": {
+    "typescript-language-server": "^5.1.0",
+    "typescript": "^5.7.0"
+  }
+}

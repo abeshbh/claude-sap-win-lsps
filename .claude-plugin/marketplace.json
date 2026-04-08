@@ -1,0 +1,39 @@
+{
+  "name": "claude-sap-win-lsps",
+  "owner": {
+    "name": "Abesh Bhattacharjee",
+    "email": "abesh@outlook.com"
+  },
+  "metadata": {
+    "description": "Windows-compatible LSP server plugins for Claude Code. Bypasses the .cmd shim spawn issue by bundling npm packages locally and using node with ${CLAUDE_PLUGIN_ROOT} paths.",
+    "version": "1.0.0",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "typescript-lsp",
+      "source": "typescript-lsp",
+      "description": "TypeScript/JavaScript language server for Windows",
+      "version": "1.0.0",
+      "author": {
+        "name": "Abesh Bhattacharjee"
+      },
+      "category": "code-intelligence",
+      "keywords": ["typescript", "javascript", "lsp", "windows"],
+      "homepage": "https://github.com/typescript-language-server/typescript-language-server",
+      "license": "MIT"
+    },
+    {
+      "name": "cds-lsp",
+      "source": "cds-lsp",
+      "description": "SAP CDS language server for Windows",
+      "version": "1.0.0",
+      "author": {
+        "name": "Abesh Bhattacharjee"
+      },
+      "category": "code-intelligence",
+      "keywords": ["sap", "cds", "cap", "lsp", "windows"],
+      "license": "MIT"
+    }
+  ]
+}

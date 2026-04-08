@@ -14,10 +14,11 @@ Tracked across multiple issues: [#19658](https://github.com/anthropics/claude-co
 
 Each plugin:
 1. Bundles a `package.json` with the LSP server as a dependency
-2. Uses a `SessionStart` hook to auto-install dependencies into `${CLAUDE_PLUGIN_DATA}` (a persistent directory that survives plugin updates)
+2. Installs dependencies into `${CLAUDE_PLUGIN_DATA}` (a persistent directory that survives plugin updates)
 3. Launches the LSP via `node` + `${CLAUDE_PLUGIN_DATA}/node_modules/...` -- bypassing `.cmd` shims entirely
+4. Includes a `SessionStart` hook to keep dependencies updated on future sessions
 
-No hardcoded paths. No manual `npm install`. No global installs. Works on any Windows machine with Node.js.
+No hardcoded paths. No global installs. Works on any Windows machine with Node.js. One-time `npm install` required after initial plugin install (see Installation below).
 
 ## Plugins
 
@@ -28,6 +29,8 @@ No hardcoded paths. No manual `npm install`. No global installs. Works on any Wi
 
 ## Installation
 
+### 1. Install plugins
+
 ```
 /plugin marketplace add abeshbh/claude-sap-win-lsps
 /plugin install typescript-lsp@claude-sap-win-lsps
@@ -35,7 +38,21 @@ No hardcoded paths. No manual `npm install`. No global installs. Works on any Wi
 /reload-plugins
 ```
 
-Dependencies are installed automatically on the first session start. The first launch may take 30-60 seconds while npm installs packages.
+### 2. Install dependencies
+
+Run the setup script from the Claude Code prompt:
+
+```
+! node ~/.claude/plugins/marketplaces/claude-sap-win-lsps/setup.js
+```
+
+This installs npm dependencies for all plugins at once. Takes 30-60 seconds on first run.
+
+### 3. Restart Claude Code
+
+Exit and restart for the LSP servers to activate.
+
+A `SessionStart` hook keeps dependencies updated on future sessions -- it detects `package.json` changes and re-runs `npm install` automatically. The setup script above is only needed once after the initial install.
 
 ## Disable conflicting plugins
 

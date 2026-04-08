@@ -8,5 +8,14 @@
   },
   "license": "MIT",
   "keywords": ["sap", "cds", "cap", "lsp", "windows"],
-  "lspServers": "../.lsp.json"
+  "lspServers": {
+    "cds": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/node_modules/@sap/cds-lsp/dist/main.js", "--stdio"],
+      "cwd": "${CLAUDE_PLUGIN_ROOT}",
+      "extensionToLanguage": {
+        ".cds": "cds"
+      }
+    }
+  }
 }
